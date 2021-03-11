@@ -6,7 +6,7 @@
 echo "update2" > test2.txt
 git diff HEAD test2.txt
 
-#BUMMER! we have a problem with binary files (if you echoed from the Powershell, crating files from Linux shell it should be fine)
+# we have a problem with binary files (if you echoed from the Powershell, crating files from Linux shell it should be fine)
 # follow https://stackoverflow.com/questions/777949/can-i-make-git-recognize-a-utf-16-file-as-text 
 # for some remediation steps to make it work from command line
 # excelent brief about Unicode encoding is here: https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses
@@ -40,8 +40,12 @@ git diff
 #lets undo the merge!!!
 git rev-parse master
 
-git reset --hard $commitID-from-the-bash-script
+#reposition current HEAD to particular commit
+git reset --hard 5f14643
+#atomic bomb solution to reset modified and delete new files
+git clean -f
 
+#show history for branch/commits changes 
 git reflog
 
 #to get back to merge commit - 
