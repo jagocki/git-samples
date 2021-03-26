@@ -22,7 +22,7 @@ CheckoutBranch $branchName
 $val = RandomString
 echo $val > "$val.txt"
 git add "$val.txt"
-git commit -m "$commitPrefix $val"
+git commit -m "$commitPrefix on $branchName $val"
 PopBranch
 }
 
@@ -35,20 +35,35 @@ function CreateLocalChanges {
     }
 }
 
-function BranchCommitMerge{
+function MergeFeature{
     param($branchFolderName, $branchName, $commitPrefix)
-    $newBranchName = "$branchFolderName" + '/' + "$branchName"
     git checkout develop
-    git branch $newBranchName
-    CreateLocalChanges $newBranchName $commitPrefix 4
+    $newBranchName = "$branchFolderName" + '/' + "$branchName"
     git merge $newBranchName --no-ff
 }
 
-function CreateFeature {
+function DevelopOnBranch {
+    param($branchFolderName, $branchName, $commitPrefix)
+    $newBranchName = "$branchFolderName" + '/' + "$branchName"
+    git branch $newBranchName
+    CreateLocalChanges $newBranchName $commitPrefix 2
+   
+}
+
+
+function WorkOnFeature{
+param (
+    $featureName
+)
+    git checkout develop
+    DevelopOnBranch 'feature' $featureName 'development'
+}
+
+function FinishFeature {
     param (
         $featureName
     )
-    BranchCommitMerge 'feature' $featureName 'development'
+    MergeFeature 'feature' $featureName 'development'
 }
 
 
@@ -56,7 +71,12 @@ function CreateRelease {
     param (
         $releaseName
     )
-    BranchCommitMerge 'release' $releaseName 'stabilization'
+    DevelopOnBranch 'release' $releaseName 'stabilization'
+    git checkout develop 
+    git merge "release/$releaseName" --no-ff
+    git checkout master 
+    git merge "release/$releaseName" --no-ff
+    git tag $releaseName
 }
 
 $global:stack = New-Object System.Collections.Stack
@@ -67,9 +87,11 @@ git init
 CreateCommit 'master' 'init'
 git branch develop
 
-CreateFeature f1
-CreateFeature f1
-
+WorkOnFeature f1
+FinishFeature f1
 CreateRelease 'rel1'
+WorkOnFeature f2
+FinishFeature f2
+CreateRelease 'rel2'
 
 git log --all --oneline --graph
