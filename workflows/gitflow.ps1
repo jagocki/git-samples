@@ -1,7 +1,6 @@
-
 function RandomString{
 param($length=4)
-   return -join ((65..90) + (97..122) | Get-Random -Count $length | % {[char]$_})
+    return -join ((65..90) + (97..122) | Get-Random -Count $length | % {[char]$_})
 }
 
 function CheckoutBranch{
@@ -47,7 +46,7 @@ function DevelopOnBranch {
     $newBranchName = "$branchFolderName" + '/' + "$branchName"
     git branch $newBranchName
     CreateLocalChanges $newBranchName $commitPrefix 2
-   
+    
 }
 
 
@@ -80,18 +79,23 @@ function CreateRelease {
 }
 
 $global:stack = New-Object System.Collections.Stack
-
-mkdir gitflow-repo
-cd gitflow-repo
+$targetDir = 'gitlap-test'
+mkdir $targetDir
+cd $targetDir
 git init
 CreateCommit 'master' 'init'
 git branch develop
 
 WorkOnFeature f1
+WorkOnFeature f2
+WorkOnFeature f2
+FinishFeature f1
+FinishFeature f1
 FinishFeature f1
 CreateRelease 'rel1'
 WorkOnFeature f2
 FinishFeature f2
 CreateRelease 'rel2'
 
-git log --all --oneline --graph
+git log --all --oneline --graph --decorate --color --branches
+    
