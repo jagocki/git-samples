@@ -1,22 +1,19 @@
-. git-operations.ps1
+. .\git-operations.ps1
 
-$targetDir = 'gitlap-test'
-mkdir $targetDir
-cd $targetDir
-git init
-CreateCommit 'master' 'init'
+$targetDir = 'git-flow-test'
+Remove-Item -Recurse -Force $targetDir
+InitRepo $targetDir 
+
 git branch develop
-
-WorkOnFeature f1
-WorkOnFeature f2
-WorkOnFeature f2
-FinishFeature f1
-FinishFeature f1
-FinishFeature f1
-CreateRelease 'rel1'
-WorkOnFeature f2
-FinishFeature f2
-CreateRelease 'rel2'
-
-git log --all --oneline --graph --decorate --color --branches
+WorkOnFeature f1 develop
+WorkOnFeature f2 develop
+WorkOnFeature f2 develop
+FinishFeatureNoFF f1 develop
+CreateReleaseGitFlow 'rel1'
+WorkOnFeature f2  develop
+FinishFeatureNoFF f2  develop
+CreateReleaseGitFlow 'rel2'
+cd ..
+# git log --all --oneline --graph --decorate --color --branches
+OpenRepoBrowser $targetDir
     
